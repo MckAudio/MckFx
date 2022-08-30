@@ -18,10 +18,11 @@ MckDelayAudioProcessorEditor::MckDelayAudioProcessorEditor(MckDelayAudioProcesso
     p.setEditor(this);
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize(400, 200);
+    setSize(240, 120);
     setResizeLimits(200, 100, 1200, 900);
     setResizable(true, true);
 
+    setLookAndFeel(&mckLookAndFeel);
 
     controls.resize(3);
     controls[0].name = "Time";
@@ -66,7 +67,7 @@ MckDelayAudioProcessorEditor::MckDelayAudioProcessorEditor(MckDelayAudioProcesso
     for (auto &slider : sliders)
     {
         slider->setSliderStyle(juce::Slider::RotaryVerticalDrag);
-        slider->setTextBoxStyle(juce::Slider::TextBoxBelow, false, 90, 40);
+        slider->setTextBoxStyle(juce::Slider::NoTextBox, false, 90, 40);
         slider->setPopupDisplayEnabled(true, true, this, 1000);
         slider->setTextValueSuffix(controls[i].unit);
         slider->setRange(controls[i].minVal, controls[i].maxVal, controls[i].stepVal);
@@ -86,6 +87,8 @@ MckDelayAudioProcessorEditor::MckDelayAudioProcessorEditor(MckDelayAudioProcesso
 
 MckDelayAudioProcessorEditor::~MckDelayAudioProcessorEditor()
 {
+    setLookAndFeel(nullptr);
+
     for(auto &slider : sliders)
     {
         slider->removeListener(this);
