@@ -10,9 +10,9 @@
 
 #include <JuceHeader.h>
 
-#include "PluginProcessor.h"
-#include "Control.h"
-#include "MckLookAndFeel.h"
+#include "PluginProcessor.hpp"
+#include "Control.hpp"
+#include "MckLookAndFeel.hpp"
 
 #include <vector>
 #include <memory>

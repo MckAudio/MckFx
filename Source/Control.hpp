@@ -1,13 +1,3 @@
-/**
- * @file Control.h
- * @author MckAudio (henri.meissner@gmx.de)
- * @brief 
- * @version 0.1
- * @date 2022-08-29
- * 
- * @copyright Copyright (c) 2022
- * 
- */
 #pragma once
 
 #include <string>

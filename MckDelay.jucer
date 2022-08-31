@@ -5,18 +5,21 @@
               pluginVST3Category="Delay,Fx" cppLanguageStandard="latest">
   <MAINGROUP id="WlNOLO" name="MckDelay">
     <GROUP id="{06368DDC-3203-EE29-56DE-95B7972CBF74}" name="Source">
-      <FILE id="pFsXzS" name="MckLookAndFeel.h" compile="0" resource="0"
-            file="Source/MckLookAndFeel.h"/>
+      <FILE id="qJEnny" name="Control.hpp" compile="0" resource="0" file="Source/Control.hpp"/>
+      <FILE id="lnp9TB" name="MckLookAndFeel.hpp" compile="0" resource="0"
+            file="Source/MckLookAndFeel.hpp"/>
+      <FILE id="a683ss" name="PluginEditor.hpp" compile="0" resource="0"
+            file="Source/PluginEditor.hpp"/>
+      <FILE id="xaLSyh" name="PluginProcessor.hpp" compile="0" resource="0"
+            file="Source/PluginProcessor.hpp"/>
+      <FILE id="VX6MSs" name="SampleDelay.cpp" compile="1" resource="0" file="Source/SampleDelay.cpp"/>
+      <FILE id="L1p23g" name="SampleDelay.hpp" compile="0" resource="0" file="Source/SampleDelay.hpp"/>
       <FILE id="KgrEMU" name="MckLookAndFeel.cpp" compile="1" resource="0"
             file="Source/MckLookAndFeel.cpp"/>
-      <FILE id="uSRzrk" name="Control.h" compile="0" resource="0" file="Source/Control.h"/>
       <FILE id="XB8I7O" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
-      <FILE id="CIsV5T" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
       <FILE id="fxERR0" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
-      <FILE id="Hg8NPp" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
