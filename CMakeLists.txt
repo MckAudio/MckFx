@@ -11,7 +11,8 @@ juce_add_plugin(MckDelayPlugin
     PLUGIN_CODE McDl
     FORMATS AU VST3 LV2 Standalone
     PRODUCT_NAME "MckDelay"
-    LV2URI https://github.com/MckAudio/MckDelay)
+    LV2URI https://github.com/MckAudio/MckDelay
+    COPY_PLUGIN_AFTER_BUILD TRUE)
 
 juce_generate_juce_header(MckDelayPlugin)
 

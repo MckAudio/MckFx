@@ -107,6 +107,12 @@ void MckDelayAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBloc
     {
         buf.resize(bufLen, 0.0);
     }
+
+    m_delays.resize(numChannels);
+    for (auto &dly : m_delays) {
+        dly.prepareToPlay(sampleRate, samplesPerBlock);
+    }
+
 }
 
 void MckDelayAudioProcessor::releaseResources()
@@ -169,13 +175,30 @@ void MckDelayAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    double wetMix = ((double)*mix) / 100.0;
-    double directMix = 1.0 - wetMix;
+    double wetMix = static_cast<double>(*mix) / 100.0;
+    double wetFb = ((double)*feedback) / 100.0;
     size_t len = buffer.getNumSamples();
+
+    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    {
+        auto *readPtr = buffer.getReadPointer(channel);
+        auto *writePtr = buffer.getWritePointer(channel);
+
+        m_delays[channel].setDelayInMs(static_cast<double>(*time));
+        m_delays[channel].setMix(wetMix);
+        m_delays[channel].setFeedback(wetFb);
+
+        for (int s = 0; s < len; s++) {
+            writePtr[s] = m_delays[channel].processSample(readPtr[s]);
+        }
+    }
+    return;
+
+
     size_t writeLeft = bufLen - bufIdx;
     size_t writeSize = std::min(len, writeLeft);
 
-    double wetFb = ((double)*feedback) / 100.0;
+    double directMix = 1.0 - wetMix;
     double directFb = 1.0 - wetFb;
 
     // Write To Delay Line

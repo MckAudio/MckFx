@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include <vector>
+#include "SampleDelay.hpp"
 
 class MckDelayAudioProcessorEditor;
 
@@ -85,6 +86,7 @@ private:
 
   double sampleRate { 0.0 };
   std::vector<std::vector<double>> delayBuffer;
+  std::vector<MckDsp::SampleDelay> m_delays;
   size_t bufLen { 0 };
   size_t bufIdx { 0 };
   size_t numChannels { 0 };
