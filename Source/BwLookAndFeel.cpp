@@ -21,7 +21,9 @@ void BwLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y, int width,
 
 
     juce::ColourGradient grad;
-    grad = juce::ColourGradient::vertical(juce::Colour::fromRGB(160, 160, 160), y, juce::Colour::fromRGB(90, 90, 90), y + height);
+    grad = juce::ColourGradient::vertical(juce::Colour::fromRGB(160, 160, 160), y, juce::Colour::fromRGB(120, 120, 120), y + height);
+    grad.addColour(0.5, juce::Colour::fromRGB(120, 120, 120));
+    grad.addColour(0.75, juce::Colour::fromRGB(105, 105, 105));
 
     // fill
     g.setGradientFill(grad);

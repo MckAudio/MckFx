@@ -21,14 +21,14 @@ target_sources(MckDelayPlugin
     ./Source/BwLookAndFeel.cpp
     ./Source/BwLookAndFeel.hpp
     ./Source/Control.hpp
+    ./Source/DelayModule.cpp
+    ./Source/DelayModule.hpp
     ./Source/MckLookAndFeel.cpp
     ./Source/MckLookAndFeel.hpp
     ./Source/PluginEditor.cpp
     ./Source/PluginEditor.hpp
     ./Source/PluginProcessor.cpp
     ./Source/PluginProcessor.hpp
-    ./Source/SampleDelay.cpp
-    ./Source/SampleDelay.hpp
 )
 
 target_compile_definitions(MckDelayPlugin

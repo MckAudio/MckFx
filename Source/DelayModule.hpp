@@ -1,18 +1,21 @@
 #pragma once
 
 #include <vector>
+#include <cstddef>
 
 namespace MckDsp
 {
-    class SampleDelay
+    class DelayModule
     {
         public:
-        SampleDelay();
-        ~SampleDelay();
+        DelayModule();
+        ~DelayModule();
 
-        void prepareToPlay(double sampleRate, int samplesPerBlock = 0);
+        void prepareToPlay(double sampleRate, int samplesPerBlock);
 
         double processSample(double in);
+
+        void processBlock(const double *readPtr, double *writePtr);
 
         void setMaxDelayInMs(double maxDelayInMs);
         double getMaxDelayInMs() { return m_maxDelayInMs; };
@@ -25,6 +28,8 @@ namespace MckDsp
 
         private:
             void resizeBuffer(double sampleRate, double maxDelayInMs);
+
+            size_t m_samplesPerBlock { 0 };
 
             double m_sampleRate { 0 };
 

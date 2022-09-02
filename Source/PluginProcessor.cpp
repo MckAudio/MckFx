@@ -100,14 +100,6 @@ void MckDelayAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBloc
     // initialisation that you need..
 
     numChannels = getTotalNumInputChannels();
-    this->sampleRate = sampleRate;
-    bufLen = static_cast<size_t>(std::ceil(static_cast<double>(getMaxTime()) / 1000.0 * sampleRate));
-    delayBuffer.resize(numChannels);
-    for (auto &buf : delayBuffer)
-    {
-        buf.resize(bufLen, 0.0);
-    }
-
     m_delays.resize(numChannels);
     for (auto &dly : m_delays) {
         dly.prepareToPlay(sampleRate, samplesPerBlock);
@@ -152,36 +144,16 @@ void MckDelayAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i) {
         buffer.clear(i, 0, buffer.getNumSamples());
+    }
 
-    /*
-    if (m_editor != nullptr)
-    {
-        double time = m_editor->getTime();
-        double feedback = m_editor->getFeedback() / 100.0;
-
-        size_t len = buffer.getNumSamples();
-    }*/
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
     size_t len = buffer.getNumSamples();
     double wetMix = static_cast<double>(*mix) / 100.0;
     double wetFb = ((double)*feedback) / 100.0;
-    double newTime = static_cast<double>(*time);
-    double timeCoeff = (newTime - m_oldTime) / static_cast<double>(len);
+    double timeCoeff = (static_cast<double>(*time) - m_oldTime) / static_cast<double>(len);
 
-    for (size_t channel = 0; channel < totalNumInputChannels; ++channel)
+    for (size_t channel = 0; channel < std::min(totalNumInputChannels, totalNumOutputChannels); ++channel)
     {
         auto *readPtr = buffer.getReadPointer(channel);
         auto *writePtr = buffer.getWritePointer(channel);
@@ -195,53 +167,7 @@ void MckDelayAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce
         }
     }
 
-    m_oldTime = newTime;
-
-    return;
-
-
-    size_t writeLeft = bufLen - bufIdx;
-    size_t writeSize = std::min(len, writeLeft);
-
-    double directMix = 1.0 - wetMix;
-    double directFb = 1.0 - wetFb;
-
-    // Write To Delay Line
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto *readPtr = buffer.getReadPointer(channel);
-        for (int s = 0; s < writeSize; s++)
-        {
-            delayBuffer[channel][bufIdx + s] = readPtr[s];
-        }
-        for (int s = writeSize; s < len; s++)
-        {
-            delayBuffer[channel][s - writeSize] = readPtr[s];
-        }
-    }
-
-    int dlySamples = static_cast<size_t>(std::round(static_cast<double>(*time) / 1000.0 * sampleRate));
-    int readIdx = (static_cast<int>(bufIdx) + bufLen - dlySamples) % bufLen;
-    size_t readLeft = bufLen - readIdx;
-    size_t readSize = std::min(len, readLeft);
-
-    // Read From Delay Line
-    for (size_t channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto *readPtr = buffer.getReadPointer(channel);
-        auto *writePtr = buffer.getWritePointer(channel);
-
-        for (size_t s = 0; s < readSize; s++)
-        {
-            writePtr[s] = readPtr[s] * directMix + delayBuffer[channel][readIdx + s] * wetMix;
-        }
-        for (size_t s = readSize; s < len; s++)
-        {
-            writePtr[s] = readPtr[s] * directMix + delayBuffer[channel][s - readSize] * wetMix;
-        }
-    }
-
-    bufIdx = (bufIdx + len) % bufLen;
+    m_oldTime = static_cast<double>(*time);
 }
 
 //==============================================================================
