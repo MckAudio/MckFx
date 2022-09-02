@@ -22,9 +22,9 @@ MckDelayAudioProcessor::MckDelayAudioProcessor()
       )
 #endif
 {
-    addParameter(time = new juce::AudioParameterInt("time", "Time", getMinTime(), getMaxTime(), 250));
-    addParameter(feedback = new juce::AudioParameterInt("feedback", "Feedback", 0, 100, 25));
-    addParameter(mix = new juce::AudioParameterInt("mix", "Mix", 0, 100, 50));
+    addParameter(time = new juce::AudioParameterInt("time", "Time", getMinTime(), getMaxTime(), 250, juce::AudioParameterIntAttributes().withLabel("ms")));
+    addParameter(feedback = new juce::AudioParameterInt("feedback", "Feedback", 0, 100, 25, juce::AudioParameterIntAttributes().withLabel("%")));
+    addParameter(mix = new juce::AudioParameterInt("mix", "Mix", 0, 100, 50, juce::AudioParameterIntAttributes().withLabel("%")));
 }
 
 MckDelayAudioProcessor::~MckDelayAudioProcessor()
@@ -175,23 +175,28 @@ void MckDelayAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
+    size_t len = buffer.getNumSamples();
     double wetMix = static_cast<double>(*mix) / 100.0;
     double wetFb = ((double)*feedback) / 100.0;
-    size_t len = buffer.getNumSamples();
+    double newTime = static_cast<double>(*time);
+    double timeCoeff = (newTime - m_oldTime) / static_cast<double>(len);
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    for (size_t channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto *readPtr = buffer.getReadPointer(channel);
         auto *writePtr = buffer.getWritePointer(channel);
 
-        m_delays[channel].setDelayInMs(static_cast<double>(*time));
         m_delays[channel].setMix(wetMix);
         m_delays[channel].setFeedback(wetFb);
 
-        for (int s = 0; s < len; s++) {
+        for (size_t s = 0; s < len; s++) {
+            m_delays[channel].setDelayInMs(m_oldTime + static_cast<double>(s) * timeCoeff);
             writePtr[s] = m_delays[channel].processSample(readPtr[s]);
         }
     }
+
+    m_oldTime = newTime;
+
     return;
 
 
@@ -221,16 +226,16 @@ void MckDelayAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce
     size_t readSize = std::min(len, readLeft);
 
     // Read From Delay Line
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    for (size_t channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto *readPtr = buffer.getReadPointer(channel);
         auto *writePtr = buffer.getWritePointer(channel);
 
-        for (int s = 0; s < readSize; s++)
+        for (size_t s = 0; s < readSize; s++)
         {
             writePtr[s] = readPtr[s] * directMix + delayBuffer[channel][readIdx + s] * wetMix;
         }
-        for (int s = readSize; s < len; s++)
+        for (size_t s = readSize; s < len; s++)
         {
             writePtr[s] = readPtr[s] * directMix + delayBuffer[channel][s - readSize] * wetMix;
         }
@@ -261,6 +266,7 @@ void MckDelayAudioProcessor::getStateInformation(juce::MemoryBlock &destData)
     xml->setAttribute("time", (double)*time);
     xml->setAttribute("feedback", (double)*feedback);
     xml->setAttribute("mix", (double)*mix);
+    copyXmlToBinary(*xml, destData);
 
     // juce::MemoryOutputStream(destData, true).writeInt(*time);
     // juce::MemoryOutputStream(destData, true).writeInt(*mix);

@@ -84,6 +84,8 @@ private:
   juce::AudioParameterInt *feedback;
   juce::AudioParameterInt *mix;
 
+  double m_oldTime { 0.0 };
+
   double sampleRate { 0.0 };
   std::vector<std::vector<double>> delayBuffer;
   std::vector<MckDsp::SampleDelay> m_delays;

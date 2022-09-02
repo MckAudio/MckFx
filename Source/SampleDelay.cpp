@@ -1,6 +1,7 @@
 #include "SampleDelay.hpp"
 
 #include <cmath>
+#include <cstddef>
 
 namespace MckDsp
 {

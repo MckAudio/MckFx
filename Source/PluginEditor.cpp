@@ -22,7 +22,7 @@ MckDelayAudioProcessorEditor::MckDelayAudioProcessorEditor(MckDelayAudioProcesso
     setResizeLimits(200, 100, 1200, 900);
     setResizable(true, true);
 
-    setLookAndFeel(&mckLookAndFeel);
+    setLookAndFeel(&bwLookAndFeel);
 
     controls.resize(3);
     controls[0].name = "Time";

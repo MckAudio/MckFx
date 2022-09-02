@@ -12,6 +12,7 @@
 
 #include "PluginProcessor.hpp"
 #include "Control.hpp"
+#include "BwLookAndFeel.hpp"
 #include "MckLookAndFeel.hpp"
 
 #include <vector>
@@ -52,6 +53,7 @@ private:
   // access the processor object that created it.
   MckDelayAudioProcessor &audioProcessor;
 
+  BwLookAndFeel bwLookAndFeel;
   MckLookAndFeel mckLookAndFeel;
 
   std::vector<Data::Control> controls;

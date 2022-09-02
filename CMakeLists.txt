@@ -18,6 +18,8 @@ juce_generate_juce_header(MckDelayPlugin)
 
 target_sources(MckDelayPlugin
     PRIVATE
+    ./Source/BwLookAndFeel.cpp
+    ./Source/BwLookAndFeel.hpp
     ./Source/Control.hpp
     ./Source/MckLookAndFeel.cpp
     ./Source/MckLookAndFeel.hpp
