@@ -25,6 +25,10 @@ MckDelayAudioProcessor::MckDelayAudioProcessor()
     addParameter(time = new juce::AudioParameterInt("time", "Time", getMinTime(), getMaxTime(), 250, juce::AudioParameterIntAttributes().withLabel("ms")));
     addParameter(feedback = new juce::AudioParameterInt("feedback", "Feedback", 0, 100, 25, juce::AudioParameterIntAttributes().withLabel("%")));
     addParameter(mix = new juce::AudioParameterInt("mix", "Mix", 0, 100, 50, juce::AudioParameterIntAttributes().withLabel("%")));
+    addParameter(lpActive = new juce::AudioParameterBool("lpactive", "Low Pass Active", false));
+    addParameter(lpFreq = new juce::AudioParameterInt("lpfreq", "Low Pass Frequency", 10, 20000, 1000, juce::AudioParameterIntAttributes().withLabel("Hz")));
+    addParameter(hpActive = new juce::AudioParameterBool("hpactive", "High Pass Active", false));
+    addParameter(hpFreq = new juce::AudioParameterInt("hpfreq", "High Pass Frequency", 10, 20000, 1000, juce::AudioParameterIntAttributes().withLabel("Hz")));
 }
 
 MckDelayAudioProcessor::~MckDelayAudioProcessor()
@@ -160,6 +164,8 @@ void MckDelayAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce
 
         m_delays[channel].setMix(wetMix);
         m_delays[channel].setFeedback(wetFb);
+        m_delays[channel].setLowPass(*lpActive, static_cast<double>(*lpFreq));
+        m_delays[channel].setHighPass(*hpActive, static_cast<double>(*hpFreq));
 
         for (size_t s = 0; s < len; s++) {
             m_delays[channel].setDelayInMs(m_oldTime + static_cast<double>(s) * timeCoeff);
@@ -192,6 +198,10 @@ void MckDelayAudioProcessor::getStateInformation(juce::MemoryBlock &destData)
     xml->setAttribute("time", (double)*time);
     xml->setAttribute("feedback", (double)*feedback);
     xml->setAttribute("mix", (double)*mix);
+    xml->setAttribute("lpactive", (double)*lpActive);
+    xml->setAttribute("lpfreq", (double)*lpFreq);
+    xml->setAttribute("hpactive", (double)*hpActive);
+    xml->setAttribute("hpfreq", (double)*hpFreq);
     copyXmlToBinary(*xml, destData);
 
     // juce::MemoryOutputStream(destData, true).writeInt(*time);
@@ -216,6 +226,10 @@ void MckDelayAudioProcessor::setStateInformation(const void *data, int sizeInByt
             *time = xmlState->getIntAttribute("time", 250);
             *feedback = xmlState->getIntAttribute("feedback", 25);
             *mix = xmlState->getIntAttribute("mix", 50);
+            *lpActive = xmlState->getBoolAttribute("lpactive", false);
+            *lpFreq = xmlState->getIntAttribute("lpfreq", 1000);
+            *hpActive = xmlState->getBoolAttribute("hpactive", false);
+            *hpFreq = xmlState->getIntAttribute("hpfreq", 1000);
         }
     }
 }

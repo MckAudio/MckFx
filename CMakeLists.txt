@@ -25,6 +25,8 @@ target_sources(MckDelayPlugin
     ./Source/DelayModule.hpp
     ./Source/MckLookAndFeel.cpp
     ./Source/MckLookAndFeel.hpp
+    ./Source/OnePoleFilter.cpp
+    ./Source/OnePoleFilter.hpp
     ./Source/PluginEditor.cpp
     ./Source/PluginEditor.hpp
     ./Source/PluginProcessor.cpp

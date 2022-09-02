@@ -14,6 +14,8 @@ namespace MckDsp
 
     void DelayModule::prepareToPlay(double sampleRate, int samplesPerBlock)
     {
+        m_lpFilter.prepareToPlay(sampleRate, samplesPerBlock);
+        m_hpFilter.prepareToPlay(sampleRate, samplesPerBlock);
         resizeBuffer(sampleRate, m_maxDelayInMs);
         m_samplesPerBlock = samplesPerBlock;
     }
@@ -27,8 +29,7 @@ namespace MckDsp
 
         unsigned readIdx = (m_idx + m_len - m_delayInSamples) % m_len;
 
-        m_buf[m_idx] = m_fb * m_buf[readIdx] + in;
-
+        m_buf[m_idx] = m_lpFilter.processSample(m_hpFilter.processSample(m_fb * m_buf[readIdx] + in));
         m_idx = (m_idx + 1) % m_len;
 
         return m_mix * m_buf[readIdx] + (1.0 - m_mix) * in;
@@ -36,14 +37,15 @@ namespace MckDsp
 
     void DelayModule::processBlock(const double *readPtr, double *writePtr)
     {
-        if (m_len == 0) {
+        if (m_len == 0)
+        {
             return;
         }
         unsigned readIdx = 0;
         for (size_t s = 0; s < m_samplesPerBlock; s++)
         {
             readIdx = (m_idx + m_len - m_delayInSamples) % m_len;
-            m_buf[m_idx] = m_fb * m_buf[readIdx] + readPtr[s];
+            m_buf[m_idx] = m_lpFilter.processSample(m_hpFilter.processSample(m_fb * m_buf[readIdx] + readPtr[s]));
             m_idx = (m_idx + 1) % m_len;
 
             writePtr[s] = m_mix * m_buf[readIdx] + (1.0 - m_mix) * readPtr[s];
@@ -70,6 +72,18 @@ namespace MckDsp
     {
         m_fb = std::min(1.0, std::max(0.0, fb));
     }
+
+    void DelayModule::setLowPass(bool active, double freq)
+    {
+        m_lpFilter.setBypass(active == false);
+        m_lpFilter.setLPF(freq);
+    };
+
+    void DelayModule::setHighPass(bool active, double freq)
+    {
+        m_hpFilter.setBypass(active == false);
+        m_hpFilter.setHPF(freq);
+    };
 
     void DelayModule::resizeBuffer(double sampleRate, double maxDelayInMs)
     {

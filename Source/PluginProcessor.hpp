@@ -83,6 +83,10 @@ private:
   juce::AudioParameterInt *time;
   juce::AudioParameterInt *feedback;
   juce::AudioParameterInt *mix;
+  juce::AudioParameterBool *lpActive;
+  juce::AudioParameterInt *lpFreq;
+  juce::AudioParameterBool *hpActive;
+  juce::AudioParameterInt *hpFreq;
 
   double m_oldTime { 0.0 };
 
