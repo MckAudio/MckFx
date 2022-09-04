@@ -22,13 +22,34 @@ MckDelayAudioProcessor::MckDelayAudioProcessor()
       )
 #endif
 {
+    juce::AudioParameterFloatAttributes freqAttr;
+    freqAttr.withLabel("Hz");
+    juce::NormalisableRange<float> freqRange(20.0f, 20000.0f, 0.1f, 0.5f);
+    freqRange.setSkewForCentre(1000.0f);
+    
     addParameter(time = new juce::AudioParameterInt("time", "Time", getMinTime(), getMaxTime(), 250, juce::AudioParameterIntAttributes().withLabel("ms")));
     addParameter(feedback = new juce::AudioParameterInt("feedback", "Feedback", 0, 100, 25, juce::AudioParameterIntAttributes().withLabel("%")));
     addParameter(mix = new juce::AudioParameterInt("mix", "Mix", 0, 100, 50, juce::AudioParameterIntAttributes().withLabel("%")));
     addParameter(lpActive = new juce::AudioParameterBool("lpactive", "Low Pass Active", false));
-    addParameter(lpFreq = new juce::AudioParameterInt("lpfreq", "Low Pass Frequency", 10, 20000, 1000, juce::AudioParameterIntAttributes().withLabel("Hz")));
+    addParameter(lpFreq = new juce::AudioParameterFloat("lpfreq", "Low Pass Frequency", freqRange, 1000, freqAttr));
     addParameter(hpActive = new juce::AudioParameterBool("hpactive", "High Pass Active", false));
-    addParameter(hpFreq = new juce::AudioParameterInt("hpfreq", "High Pass Frequency", 10, 20000, 1000, juce::AudioParameterIntAttributes().withLabel("Hz")));
+    addParameter(hpFreq = new juce::AudioParameterFloat("hpfreq", "High Pass Frequency", freqRange, 1000, freqAttr));
+    
+    /*
+    juce::AudioParameterFloatAttributes freqAttr;
+    freqAttr.withLabel("Hz");
+    freqAttr.withCategory(juce::AudioProcessorParameter::Category::genericParameter);
+    freqAttr.withStringFromValueFunction([](float value, int maximumStringLength) -> juce::String {
+        return std::to_string(std::round(value * 100.0f) / 100.0f) + " Hertz";
+    });
+    freqAttr.withValueFromStringFunction([](const juce::String &str) -> float {
+        //float val = str.getFloatValue();
+        return 42.0f;
+    });
+
+    juce::NormalisableRange<float> freqRange(20.0, 20000.0, [](float rangeStart, float rangeEnd, float valueToRemap) -> float { return 20.0f * std::pow(10.0f, 3.0f * valueToRemap); }, [](float rangeStart, float rangeEnd, float valueToRemap) -> float { return std::log10(valueToRemap/20.0f) / 3.0f; });
+    */
+
 }
 
 MckDelayAudioProcessor::~MckDelayAudioProcessor()
@@ -227,9 +248,9 @@ void MckDelayAudioProcessor::setStateInformation(const void *data, int sizeInByt
             *feedback = xmlState->getIntAttribute("feedback", 25);
             *mix = xmlState->getIntAttribute("mix", 50);
             *lpActive = xmlState->getBoolAttribute("lpactive", false);
-            *lpFreq = xmlState->getIntAttribute("lpfreq", 1000);
+            *lpFreq = static_cast<float>(xmlState->getDoubleAttribute("lpfreq", 1000));
             *hpActive = xmlState->getBoolAttribute("hpactive", false);
-            *hpFreq = xmlState->getIntAttribute("hpfreq", 1000);
+            *hpFreq = static_cast<float>(xmlState->getDoubleAttribute("hpfreq", 1000));
         }
     }
 }
