@@ -18,11 +18,12 @@ MckDelayAudioProcessorEditor::MckDelayAudioProcessorEditor(MckDelayAudioProcesso
     p.setEditor(this);
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize(240, 120);
+    setSize(800, 400);
     setResizeLimits(200, 100, 1200, 900);
     setResizable(true, true);
 
     setLookAndFeel(&bwLookAndFeel);
+    setLookAndFeel(&mckLookAndFeel);
 
     controls.resize(3);
     controls[0].name = "Time";
@@ -102,6 +103,15 @@ void MckDelayAudioProcessorEditor::paint(juce::Graphics &g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+
+
+    auto bounds = getLocalBounds();
+    bounds.setHeight(64);
+    g.setColour(juce::Colour::fromRGB(0, 43, 51));
+    g.fillRect(bounds);
+    bounds.setTop(66);
+    bounds.setHeight(2);
+    g.fillRect(bounds);
 
     // g.setColour (juce::Colours::white);
     // g.setFont (15.0f);
