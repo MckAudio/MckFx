@@ -18,9 +18,11 @@ MckDelayAudioProcessorEditor::MckDelayAudioProcessorEditor(MckDelayAudioProcesso
     p.setEditor(this);
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize(800, 400);
-    setResizeLimits(200, 100, 1200, 900);
-    setResizable(true, true);
+    int w = 3 * dialSize + 4 * colGap;
+    int h = headerHeight + dialSize + labelHeight + 2 * rowGap;
+    setSize(w, h);
+    // setResizeLimits(200, 100, 1200, 900);
+    //setResizable(true, true);
 
     setLookAndFeel(&bwLookAndFeel);
     setLookAndFeel(&mckLookAndFeel);
@@ -54,6 +56,8 @@ MckDelayAudioProcessorEditor::MckDelayAudioProcessorEditor(MckDelayAudioProcesso
     for (auto &label : labels)
     {
         label->setText(controls[i].name, juce::NotificationType::dontSendNotification);
+        label->setFont(juce::Font(labelHeight, juce::Font::plain));
+        label->setColour(juce::Label::textColourId, juce::Colour::fromRGB(230, 230, 230));
         label->setJustificationType(juce::Justification::centred);
         addAndMakeVisible(*label);
         i++;
@@ -90,7 +94,7 @@ MckDelayAudioProcessorEditor::~MckDelayAudioProcessorEditor()
 {
     setLookAndFeel(nullptr);
 
-    for(auto &slider : sliders)
+    for (auto &slider : sliders)
     {
         slider->removeListener(this);
     }
@@ -104,13 +108,12 @@ void MckDelayAudioProcessorEditor::paint(juce::Graphics &g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
-
     auto bounds = getLocalBounds();
-    bounds.setHeight(64);
-    g.setColour(juce::Colour::fromRGB(0, 43, 51));
+    bounds.setHeight(headerHeight - 2 * headerGap);
+    g.setColour(juce::Colour::fromRGB(0, 155, 179));
     g.fillRect(bounds);
-    bounds.setTop(66);
-    bounds.setHeight(2);
+    bounds.setTop(headerHeight - headerGap);
+    bounds.setHeight(headerGap);
     g.fillRect(bounds);
 
     // g.setColour (juce::Colours::white);
@@ -123,45 +126,59 @@ void MckDelayAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 
-    /*
-    juce::FlexBox fb;
-    fb.flexDirection = juce::FlexBox::Direction::row;
+    auto bounds = getLocalBounds();
+    bounds.setTop(headerHeight);
+    bounds.setHeight(dialSize + 1 * rowGap);
+    bounds.setWidth(dialSize * 3 + colGap * 4);
 
+    juce::FlexBox sliderBox;
+    sliderBox.flexDirection = juce::FlexBox::Direction::row;
     for (auto &slider : sliders)
     {
-      fb.items.add(juce::FlexItem(*(slider.get())).withFlex(0, 1, (float)getWidth() / (float) sliders.size()));
+        sliderBox.items.add(juce::FlexItem(*slider).withFlex(0, 1, dialSize).withMargin(juce::FlexItem::Margin(rowGap, colGap, 0, colGap)));
     }
+    sliderBox.performLayout(bounds.toFloat());
 
-    fb.performLayout(getLocalBounds().toFloat());
-    */
+    bounds.setTop(headerHeight + dialSize + 1 * rowGap);
+    bounds.setHeight(labelHeight + rowGap);
 
-    juce::Grid grid;
-    using Track = juce::Grid::TrackInfo;
-    using Fr = juce::Grid::Fr;
-
-    grid.templateRows = {Track(Fr(1)), Track(Fr(9))};
-    grid.templateColumns = {Track(Fr(1)), Track(Fr(1)), Track(Fr(1))};
-
+    juce::FlexBox labelBox;
+    labelBox.flexDirection = juce::FlexBox::Direction::row;
     for (auto &label : labels)
     {
-        grid.items.add(juce::GridItem(*label));
+        labelBox.items.add(juce::FlexItem(*label).withFlex(0, 1, dialSize).withMargin(juce::FlexItem::Margin(0, colGap, rowGap, colGap)));
     }
+    labelBox.performLayout(bounds.toFloat());
 
-    for (auto &slider : sliders)
-    {
-        grid.items.add(juce::GridItem(*slider));
-    }
+    /*
+        juce::Grid grid;
+        using Track = juce::Grid::TrackInfo;
+        using Fr = juce::Grid::Fr;
 
-    grid.performLayout(getLocalBounds());
+        grid.templateRows = {Track(Fr(1))};
+        grid.templateColumns = {Track(1), Track(Fr(1)), Track(Fr(1))};
+
+
+        for (auto &slider : sliders)
+        {
+            grid.items.add(juce::GridItem(*slider).withMargin(juce::GridItem::Margin(8.0f)));
+        }
+
+        grid.performLayout(bounds);*/
 }
 
 void MckDelayAudioProcessorEditor::sliderValueChanged(juce::Slider *slider)
 {
-    if (slider == &timeSlider) {
+    if (slider == &timeSlider)
+    {
         audioProcessor.setTime(static_cast<int>(std::round(slider->getValue())));
-    } else if (slider == &mixSlider) {
+    }
+    else if (slider == &mixSlider)
+    {
         audioProcessor.setMix(static_cast<int>(std::round(slider->getValue())));
-    } else if (slider == &fbSlider) {
+    }
+    else if (slider == &fbSlider)
+    {
         audioProcessor.setFeedback(static_cast<int>(std::round(slider->getValue())));
     }
 }

@@ -68,5 +68,13 @@ private:
   std::vector<juce::Slider *> sliders;
   std::vector<juce::Label *> labels;
 
+  const int headerHeight = 40;
+  const int headerGap = 2;
+  const int dialSize = 80;
+  const int dialGap = 8;
+  const int labelHeight = 16;
+  const int rowGap = 4;
+  const int colGap = 8;
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MckDelayAudioProcessorEditor)
 };

@@ -2,8 +2,8 @@
 
 MckLookAndFeel::MckLookAndFeel()
 {
-    setColour(juce::DocumentWindow::backgroundColourId, juce::Colour::fromRGB(230, 230, 230));
-    setColour(juce::Label::textColourId, juce::Colour::fromRGB(0, 66, 76));
+    setColour(juce::DocumentWindow::backgroundColourId, juce::Colour::fromRGB(42, 42, 42));
+    setColour(juce::Label::textColourId, juce::Colour::fromRGB(0, 155, 179));
 }
 
 void MckLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y, int width, int height, float sliderPos,
@@ -20,19 +20,20 @@ void MckLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y, int width
     auto angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
 
     // auto hlColour = juce::Colour::fromRGB(0, 66, 76);
-    auto bgColour = juce::Colour::fromRGB(230, 230, 230);
-    auto shade1 = juce::Colour::fromRGB(224, 224, 224);
-    auto shade2 = juce::Colour::fromRGB(190, 190, 190);
+    auto bgColour = juce::Colour::fromRGB(58, 58, 58);
+    auto bgAlt = juce::Colour::fromRGB(42,42,42);
+    auto shade1 = juce::Colour::fromRGB(74, 74, 74);
+    auto shade2 = juce::Colour::fromRGB(90, 90, 90);
     auto shade3 = juce::Colour::fromRGB(160, 160, 160);
     auto ringColour = juce::Colour::fromRGB(200, 200, 200);
     auto ringHlColour = juce::Colour::fromRGB(0, 155, 179);
 
-    auto hlColour = juce::Colour::fromRGB(0, 133, 153);
+    auto hlColour = juce::Colour::fromRGB(0, 155, 179);
     auto hlShade1 = juce::Colour::fromRGB(0, 66, 76);
     auto hlShade2 = juce::Colour::fromRGB(0, 43, 51);
 
     // Knob Fill
-    juce::ColourGradient grad(shade3, juce::Point<float>(centreX, centreY), bgColour, juce::Point<float>(x, y), true);
+    juce::ColourGradient grad(shade1, juce::Point<float>(centreX, centreY), bgAlt, juce::Point<float>(rx, ry), true);
     g.setGradientFill(grad);
     g.fillEllipse(rx, ry, rw, rw);
 
@@ -42,10 +43,10 @@ void MckLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y, int width
     juce::Path p1;
     auto pointerLength = knobRadius * 0.75f;
     auto pointerThickness = size / 10.0f;
-    p1.addRectangle(-pointerThickness * 0.5f, -knobRadius, pointerThickness, pointerLength + pointerThickness);
+    p1.addRoundedRectangle(-pointerThickness * 0.5f, -knobRadius, pointerThickness, pointerLength + pointerThickness, pointerThickness / 2.0f);
     p1.applyTransform(juce::AffineTransform::rotation(angle).translated(centreX, centreY));
 
-    g.setColour(hlShade2);
+    g.setColour(hlColour);
     g.fillPath(p1);
 
     juce::Path p4;
@@ -53,31 +54,31 @@ void MckLookAndFeel::drawRotarySlider(juce::Graphics &g, int x, int y, int width
     p4.addRectangle(-p4Thickness * 0.5f, -knobRadius, p4Thickness, pointerLength + pointerThickness - p4Thickness / 2.0f);
     p4.applyTransform(juce::AffineTransform::rotation(angle).translated(centreX, centreY));
 
-    g.setColour(hlColour);
-    g.fillPath(p4);
+    //g.setColour(hlColour);
+    //g.fillPath(p4);
 
     // outline
-    g.setColour(hlShade2);
+    g.setColour(shade2);
     g.drawEllipse(rx + outlineThickness * 0.5f, ry + outlineThickness * 0.5f, rw - outlineThickness, rw - outlineThickness, outlineThickness);
 
     // Path
     auto pathThickness = pointerThickness;
-    auto pathRadius = size - pointerThickness;
+    auto pathRadius = size - pointerThickness / 2.0f;
 
     juce::Path p2;
-    p2.addCentredArc(centreX, centreY, size, size, 0, rotaryStartAngle, rotaryEndAngle, true);
-    p2.addCentredArc(centreX, centreY, pathRadius, pathRadius, 0, rotaryEndAngle, rotaryStartAngle);
-    p2.closeSubPath();
+    p2.addCentredArc(centreX, centreY, pathRadius, pathRadius, 0, rotaryStartAngle, rotaryEndAngle, true);
+    PathStrokeType(pointerThickness, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded).createStrokedPath(p2, p2);
 
-    g.setColour(ringColour);
+    g.setColour(shade2);
     g.fillPath(p2);
+
+    //g.setColour(hlShade2);
+    //g.fillPath(p2);
 
     juce::Path p3;
     auto curAngle = rotaryStartAngle + (rotaryEndAngle - rotaryStartAngle) * sliderPos;
-    p3.addCentredArc(centreX, centreY, size, size, 0, rotaryStartAngle, curAngle, true);
-    p3.addCentredArc(centreX, centreY, pathRadius, pathRadius, 0, curAngle, rotaryStartAngle);
-    p3.closeSubPath();
-
+    p3.addCentredArc(centreX, centreY, pathRadius, pathRadius, 0, rotaryStartAngle, curAngle, true);
+    PathStrokeType(pointerThickness, juce::PathStrokeType::JointStyle::curved, juce::PathStrokeType::EndCapStyle::rounded).createStrokedPath(p3, p3);
     g.setColour(hlColour);
     g.fillPath(p3);
 }
