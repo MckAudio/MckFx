@@ -1,6 +1,6 @@
 # MckDelay
 
-![MckDelay Logo](Content/logo.png)
+![MckDelay Logo](Content/mckdelay_logo.png)
 
 ## Description
 
