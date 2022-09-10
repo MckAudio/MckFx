@@ -2,6 +2,9 @@
 
 MckLookAndFeel::MckLookAndFeel()
 {
+    Typeface::Ptr tface = Typeface::createSystemTypefaceFor(BinaryData::LatoBold_ttf, BinaryData::LatoBold_ttfSize);
+    setDefaultSansSerifTypeface(tface);
+    
     setColour(juce::DocumentWindow::backgroundColourId, juce::Colour::fromRGB(42, 42, 42));
     setColour(juce::Label::textColourId, juce::Colour::fromRGB(0, 155, 179));
 }
@@ -89,6 +92,6 @@ void MckLookAndFeel::fillResizableWindowBackground(juce::Graphics &g,
                                                    const juce::BorderSize<int> &borderSize,
                                                    juce::ResizableWindow &window)
 {
-    g.setColour(juce::Colour::fromRGB(255,127,0));
+    g.setColour(juce::Colour::fromRGB(58,58,58));
     g.fillRect(0, 0, width, height);
 }

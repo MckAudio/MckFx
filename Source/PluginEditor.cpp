@@ -16,6 +16,7 @@ MckDelayAudioProcessorEditor::MckDelayAudioProcessorEditor(MckDelayAudioProcesso
     : AudioProcessorEditor(&p), audioProcessor(p)
 {
     p.setEditor(this);
+
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     int w = 3 * dialSize + 4 * colGap;
@@ -24,8 +25,9 @@ MckDelayAudioProcessorEditor::MckDelayAudioProcessorEditor(MckDelayAudioProcesso
     // setResizeLimits(200, 100, 1200, 900);
     //setResizable(true, true);
 
-    setLookAndFeel(&bwLookAndFeel);
+    //setLookAndFeel(&bwLookAndFeel);
     setLookAndFeel(&mckLookAndFeel);
+    LookAndFeel::setDefaultLookAndFeel(&mckLookAndFeel);
 
     controls.resize(3);
     controls[0].name = "Time";
@@ -109,12 +111,26 @@ void MckDelayAudioProcessorEditor::paint(juce::Graphics &g)
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
     auto bounds = getLocalBounds();
+    auto w = bounds.getWidth();
     bounds.setHeight(headerHeight - 2 * headerGap);
     g.setColour(juce::Colour::fromRGB(0, 155, 179));
     g.fillRect(bounds);
     bounds.setTop(headerHeight - headerGap);
     bounds.setHeight(headerGap);
     g.fillRect(bounds);
+
+    // XML Stuff
+    auto svgBounds = getLocalBounds().toFloat();
+    svgBounds.setTop(2.0f * headerGap);
+    svgBounds.setHeight(headerHeight - (2.0f + 4.0f) * headerGap);
+    svgBounds.setLeft(8.0f);
+    svgBounds.setWidth(w - 16.0f);
+    //svgBounds.setWidth(svgBounds.getHeight() * 4.0f);
+    auto svgXml = XmlDocument::parse(BinaryData::mckaudio_logo_svg);
+    auto svgDrawable = Drawable::createFromSVG(*svgXml);
+    svgDrawable->setTransformToFit(svgBounds, RectanglePlacement::xLeft || RectanglePlacement::yTop);
+    svgDrawable->draw(g, 1.0f);
+    
 
     // g.setColour (juce::Colours::white);
     // g.setFont (15.0f);

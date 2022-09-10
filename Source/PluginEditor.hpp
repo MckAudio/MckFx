@@ -73,6 +73,7 @@ private:
   const int dialSize = 80;
   const int dialGap = 8;
   const int labelHeight = 16;
+  const int fontSize = 20;
   const int rowGap = 4;
   const int colGap = 8;
 

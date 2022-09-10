@@ -4,6 +4,9 @@ project(MCK_DELAY VERSION 0.0.1)
 
 add_subdirectory(JUCE)
 
+add_subdirectory(Content)
+set_property(TARGET MckBinaryData PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 juce_add_plugin(MckDelayPlugin
     VERSION 0.0.1
     COMPANY_NAME MckAudio
@@ -42,6 +45,7 @@ target_compile_definitions(MckDelayPlugin
 
 target_link_libraries(MckDelayPlugin
     PRIVATE
+    MckBinaryData
     juce::juce_core
     juce::juce_audio_basics
     juce::juce_audio_devices
