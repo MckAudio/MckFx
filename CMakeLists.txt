@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.15)
 
 project(MCK_DELAY VERSION 0.0.1)
 
-add_subdirectory(JUCE)
+add_subdirectory(deps/JUCE)
 
-add_subdirectory(Content)
+add_subdirectory(deps/MckJuce/Content)
 set_property(TARGET MckBinaryData PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 juce_add_plugin(MckDelayPlugin
@@ -19,15 +19,17 @@ juce_add_plugin(MckDelayPlugin
 
 juce_generate_juce_header(MckDelayPlugin)
 
+target_include_directories(MckDelayPlugin
+    PRIVATE
+    ./deps/MckJuce/Source)
+
 target_sources(MckDelayPlugin
     PRIVATE
-    ./Source/BwLookAndFeel.cpp
-    ./Source/BwLookAndFeel.hpp
+    ./deps/MckJuce/Source/BwLookAndFeel.cpp
+    ./deps/MckJuce/Source/MckLookAndFeel.cpp
     ./Source/Control.hpp
     ./Source/DelayModule.cpp
     ./Source/DelayModule.hpp
-    ./Source/MckLookAndFeel.cpp
-    ./Source/MckLookAndFeel.hpp
     ./Source/OnePoleFilter.cpp
     ./Source/OnePoleFilter.hpp
     ./Source/PluginEditor.cpp

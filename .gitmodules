@@ -1,3 +1,9 @@
 [submodule "JUCE"]
-	path = JUCE
+	path = deps/JUCE
+	url = https://github.com/juce-framework/JUCE
+[submodule "deps/MckJuce"]
+	path = deps/MckJuce
+	url = ../MckJuce.git
+[submodule "deps/JUCE"]
+	path = deps/JUCE
 	url = https://github.com/juce-framework/JUCE
