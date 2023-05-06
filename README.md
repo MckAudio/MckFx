@@ -17,10 +17,16 @@ sudo apt install libasound2-dev libjack-jackd2-dev ladspa-sdk libfreetype6-dev \
 
 ## Build using CMake
 
-```
+### Linux & MacOS Make
+```bash
 git submodule update --init --recursive
-mkdir build
-cd build
-cmake ..
-cmake --build . -j4
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build -j4
+```
+
+### MacOS XCode
+```bash
+git submodule update --init --recursive
+cmake -B build -G Xcode
+cmake --build build --config Release
 ```
