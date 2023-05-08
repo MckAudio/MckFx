@@ -22,7 +22,8 @@
 /**
  */
 class MckTremAudioProcessorEditor : public juce::AudioProcessorEditor,
-                                     public juce::Slider::Listener
+                                     public juce::Slider::Listener,
+                                     public juce::AudioProcessorParameter::Listener
 {
 public:
   MckTremAudioProcessorEditor(MckTremAudioProcessor &);
@@ -44,6 +45,9 @@ public:
   {
     return sliders[2]->getValue();
   }
+  
+  void parameterValueChanged (int parameterIndex, float newValue) override;
+  void parameterGestureChanged (int parameterIndex, bool gestureIsStarting) override;
 
 private:
   void sliderValueChanged(juce::Slider *slider) override;

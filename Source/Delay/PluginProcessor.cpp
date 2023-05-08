@@ -206,7 +206,15 @@ bool MckDelayAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor *MckDelayAudioProcessor::createEditor()
 {
-    return new MckDelayAudioProcessorEditor(*this);
+    auto *editor = new MckDelayAudioProcessorEditor(*this);
+    time->addListener(editor);
+    feedback->addListener(editor);
+    mix->addListener(editor);
+    lpActive->addListener(editor);
+    lpFreq->addListener(editor);
+    hpActive->addListener(editor);
+    hpFreq->addListener(editor);
+    return editor;
 }
 
 //==============================================================================

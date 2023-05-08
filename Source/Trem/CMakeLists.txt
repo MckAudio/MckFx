@@ -7,7 +7,7 @@ juce_add_plugin(MckTremPlugin
     PLUGIN_MANUFACTURER_CODE MckA
     PLUGIN_CODE McTr
     FORMATS AU VST3 LV2 Standalone
-    PRODUCT_NAME "MckTrem"
+    PRODUCT_NAME "MckTremolo"
     LV2URI https://github.com/MckAudio/MckFx
     COPY_PLUGIN_AFTER_BUILD TRUE)
 

@@ -113,7 +113,8 @@ MckTremAudioProcessorEditor::~MckTremAudioProcessorEditor()
 void MckTremAudioProcessorEditor::paint(juce::Graphics &g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+    auto bgColor = getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId);
+    g.fillAll(bgColor);
 
     auto bounds = getLocalBounds();
     auto w = bounds.getWidth();
@@ -129,17 +130,22 @@ void MckTremAudioProcessorEditor::paint(juce::Graphics &g)
     svgBounds.setTop(2.0f * headerGap);
     svgBounds.setHeight(headerHeight - (2.0f + 4.0f) * headerGap);
     svgBounds.setLeft(8.0f);
-    svgBounds.setWidth(w - 16.0f);
-    //svgBounds.setWidth(svgBounds.getHeight() * 4.0f);
+    svgBounds.setWidth(w / 2 - 16.0f);
+    // svgBounds.setWidth(svgBounds.getHeight() * 4.0f);
     auto svgXml = XmlDocument::parse(BinaryData::mckaudio_logo_svg);
     auto svgDrawable = Drawable::createFromSVG(*svgXml);
     svgDrawable->setTransformToFit(svgBounds, RectanglePlacement::xLeft || RectanglePlacement::yTop);
     svgDrawable->draw(g, 1.0f);
-    
 
-    // g.setColour (juce::Colours::white);
-    // g.setFont (15.0f);
-    // g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    auto fontBounds = getLocalBounds().toFloat();
+    fontBounds.setTop(2.0f * headerGap);
+    fontBounds.setHeight(headerHeight - (2.0f + 3.0f) * headerGap);
+    fontBounds.setLeft(w / 2.0f);
+    fontBounds.setRight(w - 8.0f);
+
+    g.setFont(juce::Font(fontSize, juce::Font::plain));
+    g.setColour(bgColor);
+    g.drawFittedText("Tremolo", fontBounds.toNearestInt(), juce::Justification::bottomRight, 1);
 }
 
 void MckTremAudioProcessorEditor::resized()
@@ -191,4 +197,28 @@ void MckTremAudioProcessorEditor::sliderValueChanged(juce::Slider *slider)
     {
         audioProcessor.setModulation(static_cast<int>(std::round(slider->getValue())));
     }
+}
+
+void MckTremAudioProcessorEditor::parameterValueChanged(int parameterIndex, float newValue)
+{
+    switch (parameterIndex)
+    {
+    case 0:
+        speedSlider.setValue(static_cast<double>(audioProcessor.getSpeed()), NotificationType::dontSendNotification);
+        break;
+    case 1:
+        shapeSlider.setValue(static_cast<double>(audioProcessor.getShape()), NotificationType::dontSendNotification);
+        break;
+    case 2:
+        intensitySlider.setValue(static_cast<double>(audioProcessor.getIntensity()), NotificationType::dontSendNotification);
+        break;
+    case 3:
+        modulationSlider.setValue(static_cast<double>(audioProcessor.getModulation()), NotificationType::dontSendNotification);
+        break;
+    default:
+        break;
+    }
+}
+void MckTremAudioProcessorEditor::parameterGestureChanged(int parameterIndex, bool gestureIsStarting)
+{
 }

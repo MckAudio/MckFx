@@ -31,7 +31,6 @@ MckTremAudioProcessor::MckTremAudioProcessor()
     addParameter(shape = new juce::AudioParameterInt("shape", "Shape", 0, 100, 0, juce::AudioParameterIntAttributes().withLabel("%")));
     addParameter(intensity = new juce::AudioParameterInt("intensity", "Intensity", 0, 100, 40, juce::AudioParameterIntAttributes().withLabel("%")));
     addParameter(modulation = new juce::AudioParameterInt("modulation", "Modulation", 0, 100, 0, juce::AudioParameterIntAttributes().withLabel("%")));
-
 }
 
 MckTremAudioProcessor::~MckTremAudioProcessor()
@@ -233,6 +232,16 @@ void MckTremAudioProcessor::setStateInformation(const void *data, int sizeInByte
             *modulation = xmlState->getIntAttribute("modulation", 0);
         }
     }
+}
+
+void MckTremAudioProcessor::setEditor(MckTremAudioProcessorEditor *editor)
+{
+    m_editor = editor;
+
+    speed->addListener(editor);
+    shape->addListener(editor);
+    intensity->addListener(editor);
+    modulation->addListener(editor);
 }
 
 //==============================================================================

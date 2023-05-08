@@ -61,7 +61,7 @@ public:
   void getStateInformation(juce::MemoryBlock &destData) override;
   void setStateInformation(const void *data, int sizeInBytes) override;
 
-  void setEditor(MckTremAudioProcessorEditor *editor){m_editor = editor; };
+  void setEditor(MckTremAudioProcessorEditor *editor);
 
   double getMinSpeed() { return 0.1; };
   double getMaxSpeed() { return 15.0; };

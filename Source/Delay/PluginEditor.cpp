@@ -104,7 +104,8 @@ MckDelayAudioProcessorEditor::~MckDelayAudioProcessorEditor()
 void MckDelayAudioProcessorEditor::paint(juce::Graphics &g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+    auto bgColor = getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId);
+    g.fillAll(bgColor);
 
     auto bounds = getLocalBounds();
     auto w = bounds.getWidth();
@@ -127,10 +128,15 @@ void MckDelayAudioProcessorEditor::paint(juce::Graphics &g)
     svgDrawable->setTransformToFit(svgBounds, RectanglePlacement::xLeft || RectanglePlacement::yTop);
     svgDrawable->draw(g, 1.0f);
     
+    auto fontBounds = getLocalBounds().toFloat();
+    fontBounds.setTop(2.0f * headerGap);
+    fontBounds.setHeight(headerHeight - (2.0f + 3.0f) * headerGap);
+    fontBounds.setLeft(w/2.0f);
+    fontBounds.setRight(w - 8.0f);
 
-    // g.setColour (juce::Colours::white);
-    // g.setFont (15.0f);
-    // g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    g.setFont (juce::Font(fontSize, juce::Font::plain));
+    g.setColour(bgColor);
+    g.drawFittedText ("Delay", fontBounds.toNearestInt(), juce::Justification::bottomRight, 1);
 }
 
 void MckDelayAudioProcessorEditor::resized()
@@ -161,22 +167,6 @@ void MckDelayAudioProcessorEditor::resized()
         labelBox.items.add(juce::FlexItem(*label).withFlex(0, 1, dialSize).withMargin(juce::FlexItem::Margin(0, colGap, rowGap, colGap)));
     }
     labelBox.performLayout(bounds.toFloat());
-
-    /*
-        juce::Grid grid;
-        using Track = juce::Grid::TrackInfo;
-        using Fr = juce::Grid::Fr;
-
-        grid.templateRows = {Track(Fr(1))};
-        grid.templateColumns = {Track(1), Track(Fr(1)), Track(Fr(1))};
-
-
-        for (auto &slider : sliders)
-        {
-            grid.items.add(juce::GridItem(*slider).withMargin(juce::GridItem::Margin(8.0f)));
-        }
-
-        grid.performLayout(bounds);*/
 }
 
 void MckDelayAudioProcessorEditor::sliderValueChanged(juce::Slider *slider)
@@ -193,4 +183,25 @@ void MckDelayAudioProcessorEditor::sliderValueChanged(juce::Slider *slider)
     {
         audioProcessor.setFeedback(static_cast<int>(std::round(slider->getValue())));
     }
+}
+
+void MckDelayAudioProcessorEditor::parameterValueChanged(int parameterIndex, float newValue)
+{
+    switch (parameterIndex)
+    {
+    case 0:
+        timeSlider.setValue(static_cast<double>(audioProcessor.getTime()), NotificationType::dontSendNotification);
+        break;
+    case 1:
+        fbSlider.setValue(static_cast<double>(audioProcessor.getFeedback()), NotificationType::dontSendNotification);
+        break;
+    case 2:
+        mixSlider.setValue(static_cast<double>(audioProcessor.getMix()), NotificationType::dontSendNotification);
+        break;
+    default:
+        break;
+    }
+}
+void MckDelayAudioProcessorEditor::parameterGestureChanged(int parameterIndex, bool gestureIsStarting)
+{
 }
