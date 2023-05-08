@@ -27,6 +27,7 @@ MckDelayAudioProcessor::MckDelayAudioProcessor()
     juce::NormalisableRange<float> freqRange(20.0f, 20000.0f, 0.1f, 0.5f);
     freqRange.setSkewForCentre(1000.0f);
     
+
     addParameter(time = new juce::AudioParameterInt("time", "Time", getMinTime(), getMaxTime(), 250, juce::AudioParameterIntAttributes().withLabel("ms")));
     addParameter(feedback = new juce::AudioParameterInt("feedback", "Feedback", 0, 100, 25, juce::AudioParameterIntAttributes().withLabel("%")));
     addParameter(mix = new juce::AudioParameterInt("mix", "Mix", 0, 100, 50, juce::AudioParameterIntAttributes().withLabel("%")));
