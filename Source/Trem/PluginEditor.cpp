@@ -27,10 +27,10 @@ MckTremAudioProcessorEditor::MckTremAudioProcessorEditor(MckTremAudioProcessor &
 
     controls.resize(3);
     controls[0].name = "Speed";
-    controls[0].value = 0.1;
-    controls[0].minVal = 0.01;
-    controls[0].maxVal = 1.0;
-    controls[0].stepVal = 0.01;
+    controls[0].value = 2.0;
+    controls[0].minVal = 0.1;
+    controls[0].maxVal = 15.0;
+    controls[0].stepVal = 0.1;
     controls[0].unit = " Hz";
     controls[1].name = "Shape";
     controls[1].value = 0.0;
@@ -46,9 +46,9 @@ MckTremAudioProcessorEditor::MckTremAudioProcessorEditor(MckTremAudioProcessor &
     controls[2].unit = " %";
 
     labels.resize(controls.size());
-    labels[0] = &timeLabel;
-    labels[1] = &fbLabel;
-    labels[2] = &mixLabel;
+    labels[0] = &speedLabel;
+    labels[1] = &shapeLabel;
+    labels[2] = &intensityLabel;
 
     int i = 0;
     for (auto &label : labels)
@@ -62,9 +62,9 @@ MckTremAudioProcessorEditor::MckTremAudioProcessorEditor(MckTremAudioProcessor &
     }
 
     sliders.resize(3);
-    sliders[0] = &timeSlider;
-    sliders[1] = &fbSlider;
-    sliders[2] = &mixSlider;
+    sliders[0] = &speedSlider;
+    sliders[1] = &shapeSlider;
+    sliders[2] = &intensitySlider;
 
     i = 0;
     for (auto &slider : sliders)
@@ -81,9 +81,9 @@ MckTremAudioProcessorEditor::MckTremAudioProcessorEditor(MckTremAudioProcessor &
         i++;
     }
 
-    timeSlider.setValue(static_cast<double>(audioProcessor.getSpeed()));
-    fbSlider.setValue(static_cast<double>(audioProcessor.getShape()));
-    mixSlider.setValue(static_cast<double>(audioProcessor.getIntensity()));
+    speedSlider.setValue(static_cast<double>(audioProcessor.getSpeed()));
+    shapeSlider.setValue(static_cast<double>(audioProcessor.getShape()));
+    intensitySlider.setValue(static_cast<double>(audioProcessor.getIntensity()));
 
     resized();
 }
@@ -181,15 +181,15 @@ void MckTremAudioProcessorEditor::resized()
 
 void MckTremAudioProcessorEditor::sliderValueChanged(juce::Slider *slider)
 {
-    if (slider == &timeSlider)
+    if (slider == &speedSlider)
     {
         audioProcessor.setSpeed(slider->getValue());
     }
-    else if (slider == &mixSlider)
+    else if (slider == &shapeSlider)
     {
         audioProcessor.setShape(static_cast<int>(std::round(slider->getValue())));
     }
-    else if (slider == &fbSlider)
+    else if (slider == &intensitySlider)
     {
         audioProcessor.setIntensity(static_cast<int>(std::round(slider->getValue())));
     }

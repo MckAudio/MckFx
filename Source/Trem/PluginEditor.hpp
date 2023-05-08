@@ -56,12 +56,12 @@ private:
 
   std::vector<Data::Control> controls;
 
-  juce::Label timeLabel;
-  juce::Label mixLabel;
-  juce::Label fbLabel;
-  juce::Slider timeSlider;
-  juce::Slider mixSlider;
-  juce::Slider fbSlider;
+  juce::Label speedLabel;
+  juce::Label shapeLabel;
+  juce::Label intensityLabel;
+  juce::Slider speedSlider;
+  juce::Slider shapeSlider;
+  juce::Slider intensitySlider;
 
   std::vector<juce::Slider *> sliders;
   std::vector<juce::Label *> labels;

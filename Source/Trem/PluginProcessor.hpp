@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include <vector>
+#include "../Dsp/LfoModule.hpp"
 
 class MckTremAudioProcessorEditor;
 
@@ -62,8 +63,8 @@ public:
 
   void setEditor(MckTremAudioProcessorEditor *editor){m_editor = editor; };
 
-  double getMinSpeed() { return 0.01; };
-  double getMaxSpeed() { return 1.0; };
+  double getMinSpeed() { return 0.1; };
+  double getMaxSpeed() { return 15.0; };
 
   void setSpeed(double s) { *speed = s; };
   double getSpeed() { return *speed; };
@@ -85,4 +86,6 @@ private:
   juce::AudioParameterInt *intensity;
 
   size_t numChannels { 0 };
+
+  MckDsp::LfoModule lfo;
 };

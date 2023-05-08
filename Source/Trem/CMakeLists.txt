@@ -21,6 +21,8 @@ target_sources(MckTremPlugin
     PRIVATE
     ../../deps/MckJuce/Source/MckLookAndFeel.cpp
     ../Types/Control.hpp
+    ../Dsp/LfoModule.hpp
+    ../Dsp/LfoModule.cpp
     ./PluginEditor.cpp
     ./PluginEditor.hpp
     ./PluginProcessor.cpp

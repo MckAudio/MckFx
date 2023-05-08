@@ -26,8 +26,8 @@ MckTremAudioProcessor::MckTremAudioProcessor()
     freqAttr.withLabel("Hz");
     juce::NormalisableRange<float> freqRange(20.0f, 20000.0f, 0.1f, 0.5f);
     freqRange.setSkewForCentre(1000.0f);
-    
-    addParameter(speed = new juce::AudioParameterFloat("speed", "Speed", getMinSpeed(), getMaxSpeed(), 0.1));
+
+    addParameter(speed = new juce::AudioParameterFloat("speed", "Speed", getMinSpeed(), getMaxSpeed(), 2.0));
     addParameter(shape = new juce::AudioParameterInt("shape", "Shape", 0, 100, 0, juce::AudioParameterIntAttributes().withLabel("%")));
     addParameter(intensity = new juce::AudioParameterInt("intensity", "Intensity", 0, 100, 40, juce::AudioParameterIntAttributes().withLabel("%")));
 }
@@ -105,6 +105,7 @@ void MckTremAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
     // initialisation that you need..
 
     numChannels = getTotalNumInputChannels();
+    lfo.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 void MckTremAudioProcessor::releaseResources()
@@ -144,32 +145,33 @@ void MckTremAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i) {
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+    {
         buffer.clear(i, 0, buffer.getNumSamples());
     }
 
-    // size_t len = buffer.getNumSamples();
-    // double wetMix = static_cast<double>(*mix) / 100.0;
-    // double wetFb = ((double)*feedback) / 100.0;
-    // double timeCoeff = (static_cast<double>(*time) - m_oldTime) / static_cast<double>(len);
+    double _speed = 0.0;
+    double _shape = 0.0;
+    double _intensity = 1.0;
+    double _lfo = 0.0;
+    for (size_t s = 0; s < buffer.getNumSamples(); s++)
+    {
+        _speed = *speed;
+        _shape = static_cast<double>(*shape) / 100.0;
+        _intensity = static_cast<double>(*intensity) / 100.0;
 
-    // for (size_t channel = 0; channel < std::min(totalNumInputChannels, totalNumOutputChannels); ++channel)
-    // {
-    //     auto *readPtr = buffer.getReadPointer(channel);
-    //     auto *writePtr = buffer.getWritePointer(channel);
+        lfo.setSpeed(_speed);
+        lfo.setShape(_shape);
+        _lfo = lfo.processSample();
 
-    //     m_delays[channel].setMix(wetMix);
-    //     m_delays[channel].setFeedback(wetFb);
-    //     m_delays[channel].setLowPass(*lpActive, static_cast<double>(*lpFreq));
-    //     m_delays[channel].setHighPass(*hpActive, static_cast<double>(*hpFreq));
+        for (size_t c = 0; c < std::min(totalNumInputChannels, totalNumOutputChannels); c++)
+        {
+            auto *readPtr = buffer.getReadPointer(c);
+            auto *writePtr = buffer.getWritePointer(c);
 
-    //     for (size_t s = 0; s < len; s++) {
-    //         m_delays[channel].setDelayInMs(m_oldTime + static_cast<double>(s) * timeCoeff);
-    //         writePtr[s] = m_delays[channel].processSample(readPtr[s]);
-    //     }
-    // }
-
-    // m_oldTime = static_cast<double>(*time);
+            writePtr[s] = readPtr[s] * ((1.0 - _intensity) + _intensity * _lfo);
+        }
+    }
 }
 
 //==============================================================================
@@ -211,7 +213,7 @@ void MckTremAudioProcessor::setStateInformation(const void *data, int sizeInByte
     {
         if (xmlState->hasTagName("MckTrem"))
         {
-            *speed = xmlState->getDoubleAttribute("speed", 0.1);
+            *speed = xmlState->getDoubleAttribute("speed", 2.0);
             *shape = xmlState->getIntAttribute("shape", 0);
             *intensity = xmlState->getIntAttribute("intensity", 40);
         }
