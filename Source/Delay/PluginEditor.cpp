@@ -22,10 +22,6 @@ MckDelayAudioProcessorEditor::MckDelayAudioProcessorEditor(MckDelayAudioProcesso
     int w = 3 * dialSize + 4 * colGap;
     int h = headerHeight + dialSize + labelHeight + 2 * rowGap;
     setSize(w, h);
-    // setResizeLimits(200, 100, 1200, 900);
-    //setResizable(true, true);
-
-    //setLookAndFeel(&bwLookAndFeel);
     setLookAndFeel(&mckLookAndFeel);
     LookAndFeel::setDefaultLookAndFeel(&mckLookAndFeel);
 

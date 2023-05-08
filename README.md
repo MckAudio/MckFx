@@ -1,10 +1,13 @@
-# MckDelay
-
-![MckDelay Logo](Logo/mckdelay_logo.png)
+# MckFx
 
 ## Description
 
-Small delay plugin to learn some JUCE.
+Collection of effects plugins written in JUCE.
+
+### MckDelay
+
+![MckDelay Logo](Logo/mckdelay_logo.png)
+Small delay plugins with one pole filters in feedback loop:
 
 ## Dependencies
 
@@ -17,7 +20,7 @@ sudo apt install libasound2-dev libjack-jackd2-dev ladspa-sdk libfreetype6-dev \
 
 ## Build using CMake
 
-### Linux & MacOS Make
+### Linux & MacOS Makefile
 ```bash
 git submodule update --init --recursive
 cmake -B build -DCMAKE_BUILD_TYPE=Release

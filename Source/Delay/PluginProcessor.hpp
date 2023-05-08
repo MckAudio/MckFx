@@ -10,7 +10,7 @@
 
 #include <JuceHeader.h>
 #include <vector>
-#include "DelayModule.hpp"
+#include "../Dsp/DelayModule.hpp"
 
 class MckDelayAudioProcessorEditor;
 
