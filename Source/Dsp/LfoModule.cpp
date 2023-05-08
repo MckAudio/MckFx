@@ -2,14 +2,13 @@
 #include <cmath>
 #include <algorithm>
 
-namespace MckDsp {
+namespace MckDsp
+{
     LfoModule::LfoModule()
     {
-
     }
     LfoModule::~LfoModule()
     {
-
     }
 
     void LfoModule::prepareToPlay(double sampleRate, int samplesPerBlock)
@@ -20,22 +19,24 @@ namespace MckDsp {
 
     double LfoModule::processSample()
     {
-        double phase = static_cast<double>(m_curTick)/static_cast<double>(m_ticks);
-        m_rect = m_curTick > m_ticks / 2 ? 0.0 : 1.0;
+        double phase = static_cast<double>(m_curTick) / static_cast<double>(m_ticks);
+        m_rect = m_curTick > m_ticks / 2 ? -1.0 : 1.0;
         m_curTick = (m_curTick + 1) % m_ticks;
-        m_sine = 0.5 + std::sin(M_PI_2 * 2.0 * phase) / 2.0;
+        m_sine = std::sin(M_PI * 2.0 * phase);
         return m_rect * m_shape + m_sine * (1.0 - m_shape);
     }
 
     void LfoModule::processBlock(double *writePtr)
     {
-
     }
 
     void LfoModule::setSpeed(double speed)
     {
         m_speed = std::min(speed, m_sampleRate / 2.0);
-        m_ticks = static_cast<size_t>(std::round(m_sampleRate / m_speed));
+        double curPhase = static_cast<double>(m_curTick)/static_cast<double>(m_ticks);
+        double newTicks = m_sampleRate / m_speed;
+        m_ticks = static_cast<size_t>(std::round(newTicks));
+        m_curTick = static_cast<size_t>(std::round(curPhase * newTicks));
     }
 
     void LfoModule::setShape(double shape)

@@ -75,6 +75,9 @@ public:
   void setIntensity(int i) { *intensity = i; };
   int getIntensity() { return *intensity; };
 
+  void setModulation(int m) { *modulation = m; };
+  int getModulation() { return *modulation; };
+
 private:
   //==============================================================================
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(MckTremAudioProcessor)
@@ -84,8 +87,10 @@ private:
   juce::AudioParameterFloat *speed;
   juce::AudioParameterInt *shape;
   juce::AudioParameterInt *intensity;
+  juce::AudioParameterInt *modulation;
 
   size_t numChannels { 0 };
 
   MckDsp::LfoModule lfo;
+  MckDsp::LfoModule mod;
 };

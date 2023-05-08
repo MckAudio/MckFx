@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "(mac) MckTrem",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/build/Source/Trem/MckTremPlugin_artefacts/Debug/VST3/MckTrem.vst3/Contents/MacOS/MckTrem",
+            "MIMode": "lldb"
+        },
+        {
             "name": "(gdb) Attach",
             "type": "cppdbg",
             "request": "attach",

@@ -19,13 +19,13 @@ MckTremAudioProcessorEditor::MckTremAudioProcessorEditor(MckTremAudioProcessor &
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    int w = 3 * dialSize + 4 * colGap;
+    int w = 4 * dialSize + 5 * colGap;
     int h = headerHeight + dialSize + labelHeight + 2 * rowGap;
     setSize(w, h);
     setLookAndFeel(&mckLookAndFeel);
     LookAndFeel::setDefaultLookAndFeel(&mckLookAndFeel);
 
-    controls.resize(3);
+    controls.resize(4);
     controls[0].name = "Speed";
     controls[0].value = 2.0;
     controls[0].minVal = 0.1;
@@ -44,11 +44,18 @@ MckTremAudioProcessorEditor::MckTremAudioProcessorEditor(MckTremAudioProcessor &
     controls[2].maxVal = 100.0;
     controls[2].stepVal = 1.0;
     controls[2].unit = " %";
+    controls[3].name = "Modulation";
+    controls[3].value = 0.0;
+    controls[3].minVal = 0.0;
+    controls[3].maxVal = 100.0;
+    controls[3].stepVal = 1.0;
+    controls[3].unit = " %";
 
     labels.resize(controls.size());
     labels[0] = &speedLabel;
     labels[1] = &shapeLabel;
     labels[2] = &intensityLabel;
+    labels[3] = &modulationLabel;
 
     int i = 0;
     for (auto &label : labels)
@@ -61,10 +68,11 @@ MckTremAudioProcessorEditor::MckTremAudioProcessorEditor(MckTremAudioProcessor &
         i++;
     }
 
-    sliders.resize(3);
+    sliders.resize(controls.size());
     sliders[0] = &speedSlider;
     sliders[1] = &shapeSlider;
     sliders[2] = &intensitySlider;
+    sliders[3] = &modulationSlider;
 
     i = 0;
     for (auto &slider : sliders)
@@ -84,6 +92,7 @@ MckTremAudioProcessorEditor::MckTremAudioProcessorEditor(MckTremAudioProcessor &
     speedSlider.setValue(static_cast<double>(audioProcessor.getSpeed()));
     shapeSlider.setValue(static_cast<double>(audioProcessor.getShape()));
     intensitySlider.setValue(static_cast<double>(audioProcessor.getIntensity()));
+    modulationSlider.setValue(static_cast<double>(audioProcessor.getModulation()));
 
     resized();
 }
@@ -138,10 +147,11 @@ void MckTremAudioProcessorEditor::resized()
     // This is generally where you'll want to lay out the positions of any
     // subcomponents in your editor..
 
+    auto len = controls.size();
     auto bounds = getLocalBounds();
     bounds.setTop(headerHeight);
     bounds.setHeight(dialSize + 1 * rowGap);
-    bounds.setWidth(dialSize * 3 + colGap * 4);
+    bounds.setWidth(dialSize * len + colGap * (len + 1));
 
     juce::FlexBox sliderBox;
     sliderBox.flexDirection = juce::FlexBox::Direction::row;
@@ -161,22 +171,6 @@ void MckTremAudioProcessorEditor::resized()
         labelBox.items.add(juce::FlexItem(*label).withFlex(0, 1, dialSize).withMargin(juce::FlexItem::Margin(0, colGap, rowGap, colGap)));
     }
     labelBox.performLayout(bounds.toFloat());
-
-    /*
-        juce::Grid grid;
-        using Track = juce::Grid::TrackInfo;
-        using Fr = juce::Grid::Fr;
-
-        grid.templateRows = {Track(Fr(1))};
-        grid.templateColumns = {Track(1), Track(Fr(1)), Track(Fr(1))};
-
-
-        for (auto &slider : sliders)
-        {
-            grid.items.add(juce::GridItem(*slider).withMargin(juce::GridItem::Margin(8.0f)));
-        }
-
-        grid.performLayout(bounds);*/
 }
 
 void MckTremAudioProcessorEditor::sliderValueChanged(juce::Slider *slider)
@@ -192,5 +186,9 @@ void MckTremAudioProcessorEditor::sliderValueChanged(juce::Slider *slider)
     else if (slider == &intensitySlider)
     {
         audioProcessor.setIntensity(static_cast<int>(std::round(slider->getValue())));
+    }
+    else if (slider == &modulationSlider)
+    {
+        audioProcessor.setModulation(static_cast<int>(std::round(slider->getValue())));
     }
 }

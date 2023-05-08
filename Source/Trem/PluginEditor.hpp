@@ -59,9 +59,11 @@ private:
   juce::Label speedLabel;
   juce::Label shapeLabel;
   juce::Label intensityLabel;
+  juce::Label modulationLabel;
   juce::Slider speedSlider;
   juce::Slider shapeSlider;
   juce::Slider intensitySlider;
+  juce::Slider modulationSlider;
 
   std::vector<juce::Slider *> sliders;
   std::vector<juce::Label *> labels;

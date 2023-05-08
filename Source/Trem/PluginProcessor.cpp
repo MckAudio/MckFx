@@ -30,6 +30,8 @@ MckTremAudioProcessor::MckTremAudioProcessor()
     addParameter(speed = new juce::AudioParameterFloat("speed", "Speed", getMinSpeed(), getMaxSpeed(), 2.0));
     addParameter(shape = new juce::AudioParameterInt("shape", "Shape", 0, 100, 0, juce::AudioParameterIntAttributes().withLabel("%")));
     addParameter(intensity = new juce::AudioParameterInt("intensity", "Intensity", 0, 100, 40, juce::AudioParameterIntAttributes().withLabel("%")));
+    addParameter(modulation = new juce::AudioParameterInt("modulation", "Modulation", 0, 100, 0, juce::AudioParameterIntAttributes().withLabel("%")));
+
 }
 
 MckTremAudioProcessor::~MckTremAudioProcessor()
@@ -106,6 +108,7 @@ void MckTremAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock
 
     numChannels = getTotalNumInputChannels();
     lfo.prepareToPlay(sampleRate, samplesPerBlock);
+    mod.prepareToPlay(sampleRate, samplesPerBlock);
 }
 
 void MckTremAudioProcessor::releaseResources()
@@ -150,19 +153,29 @@ void MckTremAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer, juce:
         buffer.clear(i, 0, buffer.getNumSamples());
     }
 
+    mod.setShape(0.0);
+    mod.setSpeed(0.5);
+
     double _speed = 0.0;
     double _shape = 0.0;
     double _intensity = 1.0;
+    double _modulation = 0.0;
     double _lfo = 0.0;
+    double _mod = 0.0;
+
     for (size_t s = 0; s < buffer.getNumSamples(); s++)
     {
         _speed = *speed;
         _shape = static_cast<double>(*shape) / 100.0;
         _intensity = static_cast<double>(*intensity) / 100.0;
+        _modulation = static_cast<double>(*modulation) / 100.0;
+
+        _mod = mod.processSample();
+        _speed *= (1.0 + 0.5 * _modulation * _mod);
 
         lfo.setSpeed(_speed);
         lfo.setShape(_shape);
-        _lfo = lfo.processSample();
+        _lfo = 0.5 + lfo.processSample() / 2.0;
 
         for (size_t c = 0; c < std::min(totalNumInputChannels, totalNumOutputChannels); c++)
         {
@@ -196,6 +209,7 @@ void MckTremAudioProcessor::getStateInformation(juce::MemoryBlock &destData)
     xml->setAttribute("speed", (double)*speed);
     xml->setAttribute("shape", (double)*shape);
     xml->setAttribute("intensity", (double)*intensity);
+    xml->setAttribute("modulation", (double)*modulation);
     copyXmlToBinary(*xml, destData);
 }
 
@@ -216,6 +230,7 @@ void MckTremAudioProcessor::setStateInformation(const void *data, int sizeInByte
             *speed = xmlState->getDoubleAttribute("speed", 2.0);
             *shape = xmlState->getIntAttribute("shape", 0);
             *intensity = xmlState->getIntAttribute("intensity", 40);
+            *modulation = xmlState->getIntAttribute("modulation", 0);
         }
     }
 }
